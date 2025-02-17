@@ -17,7 +17,8 @@
 /usr/mpi/gcc/openmpi-4.1.5a1/bin/mpirun -n 2 demo.out
 
 # build
-
+mkdir build
+cd build
 cmake ..
 make
 
