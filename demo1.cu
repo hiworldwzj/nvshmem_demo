@@ -13,29 +13,34 @@ __global__ void simple_shift(int *destination) {
 }
 
 int main(int argc, char *argv[]) {
-    int rank, ndevices;
+    extern char **environ; // 声明外部变量 environ
 
+    int rank, ndevices;
+    
     nvshmemx_init_attr_t attr;
     MPI_Comm comm = MPI_COMM_WORLD;
     attr.mpi_comm = &comm;
 
-    for(int i =0; i < argc; i++) {
-        printf("%s\n", argv[i]);
-    }
-
-   extern char **environ; // 声明外部变量 environ
+    // 遍历并打印所有环境变量
+    for (char **env = environ; *env != 0; env++) {
+        printf("%s\n", *env);
+    };
+    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n");
     
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    if(rank == 0) {
-        // 遍历并打印所有环境变量
-        for (char **env = environ; *env != 0; env++) {
-            printf("%s\n", *env);
-        };
+    // 遍历并打印所有环境变量
+    for (char **env = environ; *env != 0; env++) {
+        printf("%s\n", *env);
+    };
 
-    }
+    char port_name[MPI_MAX_PORT_NAME];
+    MPI_Open_port(MPI_INFO_NULL, port_name);
+    printf("Port: %s\n", port_name);  // 例如输出 "192.168.1.100:5000"
 
+
+     
     int msg;
     cudaStream_t stream;
 
@@ -55,6 +60,9 @@ int main(int argc, char *argv[]) {
 
     nvshmem_free(destination);
     nvshmem_finalize();
+    while(true) {
+
+    };
     MPI_Finalize();
     return 0;
 }
